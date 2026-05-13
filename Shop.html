@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YAME — Prestige Collection 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09090b;
+        --surface: #111113;
+        --border: rgba(255, 255, 255, 0.07);
+        --text: #f0ece5;
+        --muted: #6b6760;
+        --gold: #c9a84c;
+        --gold-light: #e8d5a3;
+        --rose: #d4607a;
+        --card-bg: #141416;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+        cursor: none;
+      }
+
+      /* ── CUSTOM CURSOR ── */
+      .cursor {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.1s;
+      }
+      .cursor-ring {
+        position: fixed;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(201, 168, 76, 0.4);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99998;
+        transform: translate(-50%, -50%);
+        transition: all 0.18s ease;
+      }
+
+      /* ── CANVAS BACKGROUND ── */
+      #bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 5%;
+        height: 72px;
+        background: rgba(9, 9, 11, 0.82);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.9rem;
+        font-weight: 300;
+        letter-spacing: 0.25em;
+        color: var(--gold);
+        text-decoration: none;
+      }
+
+      .nav-center {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+      .nav-center a {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.25s;
+      }
+      .nav-center a:hover {
+        color: var(--gold);
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      /* Search */
+      .search-wrap {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        padding: 0 14px;
+        gap: 8px;
+        height: 36px;
+      }
+      .search-wrap input {
+        background: none;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.82rem;
+        width: 160px;
+      }
+      .search-wrap input::placeholder {
+        color: var(--muted);
+      }
+      .search-icon {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      /* Cart */
+      .cart-btn {
+        position: relative;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--text);
+        background: none;
+        border: none;
+        padding: 4px;
+      }
+      .cart-count {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        background: var(--rose);
+        color: white;
+        font-size: 9px;
+        font-family: "DM Mono", monospace;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cart-dropdown {
+        position: absolute;
+        top: calc(100% + 16px);
+        right: 0;
+        width: 240px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 20px;
+        display: none;
+        font-size: 0.82rem;
+        color: var(--muted);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .cart-btn:hover .cart-dropdown {
+        display: block;
+      }
+
+      /* Hamburger */
+      .ham-wrap {
+        position: relative;
+      }
+      .ham-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .ham-btn span {
+        display: block;
+        width: 22px;
+        height: 1px;
+        background: var(--text);
+        transition: 0.35s;
+      }
+      .sidebar-open .ham-btn span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+      }
+      .sidebar-open .ham-btn span:nth-child(2) {
+        opacity: 0;
+      }
+      .sidebar-open .ham-btn span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+      }
+
+      /* ── SIDEBAR ── */
+      .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s;
+        backdrop-filter: blur(4px);
+      }
+      .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        right: -340px;
+        width: 320px;
+        height: 100vh;
+        background: var(--surface);
+        border-left: 1px solid var(--border);
+        z-index: 2000;
+        padding: 80px 32px 40px;
+        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
+      }
+      .sidebar.active {
+        right: 0;
+      }
+
+      .sidebar-logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.4rem;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+        margin-bottom: 40px;
+      }
+      .sidebar-section {
+        margin-bottom: 8px;
+      }
+      .sidebar-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        font-size: 0.82rem;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-transform: uppercase;
+        font-family: "DM Mono", monospace;
+        transition: color 0.2s;
+      }
+      .sidebar-section-header:hover {
+        color: var(--gold);
+      }
+      .sidebar-section-header .chevron {
+        transition: transform 0.3s;
+        font-size: 0.7rem;
+      }
+      .sidebar-section-header.open .chevron {
+        transform: rotate(180deg);
+      }
+      .sidebar-submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease;
+      }
+      .sidebar-submenu.open {
+        max-height: 300px;
+      }
+      .sidebar-submenu a {
+        display: block;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s;
+        border-left: 1px solid var(--border);
+        margin: 4px 0;
+      }
+      .sidebar-submenu a:hover {
+        color: var(--text);
+        border-left-color: var(--gold);
+      }
+
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 120px 5% 80px;
+        overflow: hidden;
+      }
+
+      /* animated gradient ring behind hero text */
+      .hero-ring {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        border: 1px solid rgba(201, 168, 76, 0.12);
+        animation: ringPulse 6s ease-in-out infinite;
+      }
+      .hero-ring:nth-child(2) {
+        width: 400px;
+        height: 400px;
+        animation-delay: 1s;
+        border-color: rgba(201, 168, 76, 0.08);
+      }
+      .hero-ring:nth-child(3) {
+        width: 800px;
+        height: 800px;
+        animation-delay: 2s;
+        border-color: rgba(201, 168, 76, 0.05);
+      }
+      @keyframes ringPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.04);
+          opacity: 0.6;
+        }
+      }
+
+      .hero-tag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 24px;
+        animation: fadeUp 1s ease 0.2s both;
+      }
+      .hero-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(4rem, 10vw, 9rem);
+        font-weight: 300;
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        margin-bottom: 24px;
+        animation: fadeUp 1s ease 0.4s both;
+      }
+      .hero-title em {
+        color: var(--gold);
+        font-style: italic;
+      }
+      .hero-sub {
+        font-size: 0.95rem;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        margin-bottom: 50px;
+        animation: fadeUp 1s ease 0.6s both;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        animation: fadeUp 1s ease 0.8s both;
+      }
+
+      .btn {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 14px 32px;
+        text-decoration: none;
+        transition: all 0.28s;
+        border-radius: 2px;
+        display: inline-block;
+        cursor: pointer;
+      }
+      .btn-gold {
+        background: var(--gold);
+        color: var(--bg);
+        border: 1px solid var(--gold);
+      }
+      .btn-gold:hover {
+        background: transparent;
+        color: var(--gold);
+      }
+      .btn-ghost {
+        border: 1px solid var(--border);
+        color: var(--muted);
+        background: none;
+      }
+      .btn-ghost:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Scrolling marquee below hero */
+      .marquee-wrap {
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 0;
+        overflow: hidden;
+        background: var(--surface);
+      }
+      .marquee-track {
+        display: flex;
+        gap: 60px;
+        white-space: nowrap;
+        animation: marquee 18s linear infinite;
+      }
+      .marquee-item {
+        font-family: "Cormorant Garamond", serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .marquee-sep {
+        color: var(--gold);
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ── PRODUCT SECTION ── */
+      .section {
+        position: relative;
+        z-index: 1;
+        padding: 90px 5%;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 48px;
+      }
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 10px;
+      }
+      .section-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        font-weight: 300;
+        line-height: 1.1;
+        color: var(--text);
+      }
+      .view-all {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .view-all:hover {
+        color: var(--gold);
+      }
+
+      /* Product grid */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2px;
+      }
+
+      .product-card {
+        background: var(--card-bg);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .product-card-inner {
+        position: relative;
+        overflow: hidden;
+      }
+      .product-img-wrap {
+        width: 100%;
+        aspect-ratio: 3/4;
+        overflow: hidden;
+        background: #1a1a1c;
+      }
+      .product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition:
+          transform 0.7s cubic-bezier(0.25, 1, 0.5, 1),
+          filter 0.5s;
+        display: block;
+      }
+      .product-card:hover .product-img {
+        transform: scale(1.08);
+        filter: brightness(0.75);
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        font-family: "DM Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 1px;
+      }
+      .badge-new {
+        background: var(--gold);
+        color: var(--bg);
+      }
+      .badge-sale {
+        background: var(--rose);
+        color: white;
+      }
+
+      /* Quick action on hover */
+      .product-actions {
+        position: absolute;
+        bottom: -60px;
+        left: 0;
+        right: 0;
+        display: flex;
+        gap: 0;
+        transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .product-card:hover .product-actions {
+        bottom: 0;
+      }
+
+      .product-act-btn {
+        flex: 1;
+        padding: 14px 8px;
+        font-family: "DM Mono", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .act-cart {
+        background: var(--gold);
+        color: var(--bg);
+      }
+      .act-cart:hover {
+        background: var(--gold-light);
+      }
+      .act-view {
+        background: rgba(9, 9, 11, 0.9);
+        color: var(--gold);
+        border-left: 1px solid rgba(201, 168, 76, 0.2);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .act-view:hover {
+        background: rgba(201, 168, 76, 0.1);
+      }
+
+      .product-info {
+        padding: 18px 16px 20px;
+      }
+      .product-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.15rem;
+        font-weight: 400;
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+      .product-meta {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .product-price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .price-now {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--gold);
+      }
+      .price-old {
+        font-size: 0.8rem;
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+
+      /* ── BANNER STRIP ── */
+      .banner-strip {
+        position: relative;
+        z-index: 1;
+        background: var(--gold);
+        padding: 80px 5%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+      .banner-strip::before {
+        content: "YAME";
+        position: absolute;
+        right: -40px;
+        top: -30px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 12rem;
+        font-weight: 300;
+        color: rgba(9, 9, 11, 0.08);
+        pointer-events: none;
+        line-height: 1;
+      }
+      .banner-text h2 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 5vw, 4rem);
+        font-weight: 300;
+        color: var(--bg);
+        line-height: 1.1;
+        margin-bottom: 12px;
+      }
+      .banner-text p {
+        font-size: 0.9rem;
+        color: rgba(9, 9, 11, 0.6);
+      }
+      .banner-strip .btn-ghost {
+        border-color: rgba(9, 9, 11, 0.3);
+        color: var(--bg);
+      }
+      .banner-strip .btn-ghost:hover {
+        border-color: var(--bg);
+        background: var(--bg);
+        color: var(--gold);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        position: relative;
+        z-index: 1;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 70px 5% 40px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 50px;
+        margin-bottom: 60px;
+      }
+      .footer-logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.8rem;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+        margin-bottom: 16px;
+      }
+      .footer-about {
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+      .footer-col-title {
+        font-family: "DM Mono", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--gold);
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        padding-top: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "DM Mono", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      /* ── UTILITIES ── */
+      #back-to-top {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 1500;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--gold);
+        font-size: 1rem;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      #back-to-top:hover {
+        background: var(--gold);
+        color: var(--bg);
+      }
+
+      #toast {
+        position: fixed;
+        bottom: 32px;
+        left: 32px;
+        z-index: 4000;
+        background: var(--surface);
+        border: 1px solid var(--gold);
+        color: var(--text);
+        padding: 14px 24px;
+        border-radius: 2px;
+        font-size: 0.82rem;
+        display: none;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        animation: slideUp 0.4s ease;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Chat */
+      .chat-bubble {
+        position: fixed;
+        bottom: 88px;
+        right: 32px;
+        z-index: 1500;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--gold);
+        color: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(201, 168, 76, 0.4);
+        transition: transform 0.25s;
+      }
+      .chat-bubble:hover {
+        transform: scale(1.1);
+      }
+
+      .chat-box {
+        position: fixed;
+        bottom: 155px;
+        right: 32px;
+        z-index: 2000;
+        width: 300px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .chat-box.show {
+        display: flex;
+      }
+      .chat-header {
+        background: var(--gold);
+        color: var(--bg);
+        padding: 14px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .chat-header button {
+        background: none;
+        border: none;
+        color: var(--bg);
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+      .chat-content {
+        height: 180px;
+        padding: 16px;
+        overflow-y: auto;
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .chat-footer {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid var(--border);
+        gap: 8px;
+      }
+      .chat-footer input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 12px;
+        border-radius: 2px;
+        outline: none;
+        font-size: 0.82rem;
+      }
+      .chat-footer button {
+        background: var(--gold);
+        color: var(--bg);
+        border: none;
+        padding: 0 14px;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.78rem;
+      }
+
+      @media (max-width: 768px) {
+        .nav-center {
+          display: none;
+        }
+        .search-wrap input {
+          width: 120px;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .hero-title {
+          font-size: 4rem;
+        }
+        body {
+          cursor: auto;
+        }
+        .cursor,
+        .cursor-ring {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- CURSOR -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- CANVAS -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- NAV -->
+    <nav>
+      <a href="Shop.html" class="logo">YAME</a>
+      <ul class="nav-center">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="#products">Sản Phẩm</a></li>
+        <li><a href="#">Bộ Sưu Tập</a></li>
+        <li><a href="#">Về Chúng Tôi</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Tìm sản phẩm..." />
+        </div>
+        <div class="cart-btn" style="position: relative">
+          <span>🛒</span>
+          <span class="cart-count" id="cart-count">0</span>
+          <div class="cart-dropdown">Giỏ hàng đang trống 🛍️</div>
+        </div>
+        <div class="ham-wrap">
+          <button class="ham-btn" id="ham-btn" onclick="toggleSidebar()">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div
+      class="sidebar-overlay"
+      id="sidebar-overlay"
+      onclick="toggleSidebar()"
+    ></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">YAME</div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-header" onclick="toggleAccordion(this)">
+          Sản Phẩm <span class="chevron">▾</span>
+        </div>
+        <div class="sidebar-submenu">
+          <a href="#">👚 Thời trang nữ</a>
+          <a href="#">👔 Thời trang nam</a>
+          <a href="#">🎒 Phụ kiện</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-header" onclick="toggleAccordion(this)">
+          Làm Đẹp <span class="chevron">▾</span>
+        </div>
+        <div class="sidebar-submenu">
+          <a href="#">🧴 Mỹ phẩm</a>
+          <a href="#">✨ Chăm sóc da</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-header" onclick="toggleAccordion(this)">
+          Tài Khoản <span class="chevron">▾</span>
+        </div>
+        <div class="sidebar-submenu">
+          <a href="profile shop.html">👤 Hồ sơ</a>
+          <a href="login.html">🔐 Đăng nhập</a>
+          <a href="login.html">📝 Đăng ký</a>
+          <a href="oder.html">📦 Đơn hàng</a>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-header" onclick="toggleAccordion(this)">
+          Hỗ Trợ <span class="chevron">▾</span>
+        </div>
+        <div class="sidebar-submenu">
+          <a href="#">📞 Liên hệ</a>
+          <a href="#">❓ FAQ</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-ring"></div>
+      <div class="hero-ring"></div>
+      <div class="hero-ring"></div>
+      <div class="hero-tag">Bộ Sưu Tập Prestige · 2026</div>
+      <h1 class="hero-title">YAME<br /><em>Prestige</em></h1>
+      <p class="hero-sub">Nâng tầm phong cách thời trang Việt</p>
+      <div class="hero-actions">
+        <a href="#products" class="btn btn-gold">Khám Phá Ngay</a>
+        <a href="#" class="btn btn-ghost">Bộ Sưu Tập</a>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+      <div class="marquee-track">
+        <span class="marquee-item">Hoodie Cao Cấp</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Free Ship Toàn Quốc</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Đổi Trả 30 Ngày</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Chất Liệu Premium 380gsm</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">New Arrivals Weekly</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Hoodie Cao Cấp</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Free Ship Toàn Quốc</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Đổi Trả 30 Ngày</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">Chất Liệu Premium 380gsm</span>
+        <span class="marquee-sep">✦</span>
+        <span class="marquee-item">New Arrivals Weekly</span>
+        <span class="marquee-sep">✦</span>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <section class="section" id="products">
+      <div class="section-head">
+        <div>
+          <div class="section-label">Mới Nhất</div>
+          <h2 class="section-title">Sản Phẩm<br />Nổi Bật</h2>
+        </div>
+        <a href="#" class="view-all">Xem tất cả →</a>
+      </div>
+
+      <div class="product-grid">
+        <!-- Card 1 -->
+        <div class="product-card">
+          <div class="product-card-inner">
+            <div class="product-img-wrap">
+              <img
+                class="product-img"
+                src="https://via.placeholder.com/400x533/1a1a1c/c9a84c?text=HOODIE+CLASSIC"
+                alt="Hoodie Classic"
+              />
+            </div>
+            <span class="product-badge badge-new">Mới</span>
+            <div class="product-actions">
+              <button class="product-act-btn act-cart" onclick="addToCart()">
+                + Giỏ Hàng
+              </button>
+              <a href="product-detail.html" class="product-act-btn act-view"
+                >Chi Tiết</a
+              >
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Hoodie Nữ Classic</div>
+            <div class="product-meta">Chân cua · Oversize</div>
+            <div class="product-price-row">
+              <span class="price-now">350.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="product-card">
+          <div class="product-card-inner">
+            <div class="product-img-wrap">
+              <img
+                class="product-img"
+                src="https://via.placeholder.com/400x533/1e1a18/c9a84c?text=SWEETIE+PINK"
+                alt="Sweetie Pink"
+              />
+            </div>
+            <span class="product-badge badge-sale">−33%</span>
+            <div class="product-actions">
+              <button class="product-act-btn act-cart" onclick="addToCart()">
+                + Giỏ Hàng
+              </button>
+              <a href="product-detail.html" class="product-act-btn act-view"
+                >Chi Tiết</a
+              >
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Hoodie Sweetie Pink</div>
+            <div class="product-meta">Nỉ bông · Loose</div>
+            <div class="product-price-row">
+              <span class="price-now">299.000đ</span>
+              <span class="price-old">450.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="product-card">
+          <div class="product-card-inner">
+            <div class="product-img-wrap">
+              <img
+                class="product-img"
+                src="https://via.placeholder.com/400x533/111a14/c9a84c?text=GREEN+MINT"
+                alt="Green Mint"
+              />
+            </div>
+            <span class="product-badge badge-new">Mới</span>
+            <div class="product-actions">
+              <button class="product-act-btn act-cart" onclick="addToCart()">
+                + Giỏ Hàng
+              </button>
+              <a href="product-detail.html" class="product-act-btn act-view"
+                >Chi Tiết</a
+              >
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Hoodie Green Mint</div>
+            <div class="product-meta">Cotton · Boxy</div>
+            <div class="product-price-row">
+              <span class="price-now">420.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="product-card">
+          <div class="product-card-inner">
+            <div class="product-img-wrap">
+              <img
+                class="product-img"
+                src="https://via.placeholder.com/400x533/18181a/c9a84c?text=ONYX+BLACK"
+                alt="Onyx Black"
+              />
+            </div>
+            <div class="product-actions">
+              <button class="product-act-btn act-cart" onclick="addToCart()">
+                + Giỏ Hàng
+              </button>
+              <a href="product-detail.html" class="product-act-btn act-view"
+                >Chi Tiết</a
+              >
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Hoodie Onyx Black</div>
+            <div class="product-meta">Premium Fleece · Regular</div>
+            <div class="product-price-row">
+              <span class="price-now">390.000đ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNER -->
+    <div class="banner-strip">
+      <div class="banner-text">
+        <h2>Miễn phí vận chuyển<br />cho đơn từ 500.000đ</h2>
+        <p>Áp dụng toàn quốc · Giao trong 2–3 ngày</p>
+      </div>
+      <a href="#" class="btn btn-ghost">Mua Ngay</a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">YAME</div>
+          <p class="footer-about">
+            Thương hiệu thời trang Việt Nam hướng đến phong cách tinh tế, hiện
+            đại và bền vững. Mỗi sản phẩm là một câu chuyện về chất lượng.
+          </p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Sản Phẩm</div>
+          <a href="#">Thời trang nữ</a>
+          <a href="#">Thời trang nam</a>
+          <a href="#">Phụ kiện</a>
+          <a href="#">Sale</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Hỗ Trợ</div>
+          <a href="#">Chính sách đổi trả</a>
+          <a href="#">Hướng dẫn size</a>
+          <a href="#">FAQ</a>
+          <a href="#">Liên hệ</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Theo Dõi</div>
+          <a href="https://www.facebook.com/share/1LHGuVGezW/">Facebook</a>
+          <a
+            href="https://www.instagram.com/engfa_hongngoc?igsh=MWwzaDdvbGFmZm1nbg=="
+            >Instagram</a
+          >
+          <a href="https://www.tiktok.com/@hongngoc201_?_r=1&_t=ZS-96JZqWuLODt"
+            >TikTok</a
+          >
+          <a href="https://www.threads.com/@engfa_hongngoc">Threads</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 YAME Prestige. All rights reserved.</span>
+        <span>Made with ♦ in Việt Nam</span>
+      </div>
+    </footer>
+
+    <!-- UTILITIES -->
+    <button
+      id="back-to-top"
+      onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    >
+      ↑
+    </button>
+    <div id="toast">✦ Đã thêm vào giỏ hàng</div>
+
+    <!-- CHAT -->
+    <div class="chat-bubble" id="chat-icon">💬</div>
+    <div id="chat-box" class="chat-box">
+      <div class="chat-header">
+        <span>Hỗ Trợ YAME</span>
+        <button id="close-chat">×</button>
+      </div>
+      <div class="chat-content">
+        <p>
+          Xin chào! Bạn cần hỗ trợ gì hôm nay? Chúng tôi luôn sẵn sàng giúp đỡ
+          bạn 🌟
+        </p>
+      </div>
+      <div class="chat-footer">
+        <input type="text" placeholder="Nhập tin nhắn..." />
+        <button>Gửi</button>
+      </div>
+    </div>
+
+    <script>
+      // ── ANIMATED PARTICLE BACKGROUND ──
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const particles = [];
+      const PARTICLE_COUNT = 80;
+
+      class Particle {
+        constructor() {
+          this.reset(true);
+        }
+        reset(initial = false) {
+          this.x = Math.random() * canvas.width;
+          this.y = initial ? Math.random() * canvas.height : canvas.height + 10;
+          this.size = Math.random() * 1.5 + 0.3;
+          this.speedY = -(Math.random() * 0.4 + 0.1);
+          this.speedX = (Math.random() - 0.5) * 0.2;
+          this.opacity = Math.random() * 0.5 + 0.1;
+          this.gold = Math.random() > 0.6;
+        }
+        update() {
+          this.y += this.speedY;
+          this.x += this.speedX;
+          if (this.y < -10) this.reset();
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.gold
+            ? `rgba(201,168,76,${this.opacity})`
+            : `rgba(240,236,229,${this.opacity * 0.4})`;
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+
+      // Slowly shifting gradient background
+      let gradAngle = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Base dark background
+        ctx.fillStyle = "#09090b";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Subtle radial glow
+        const grd = ctx.createRadialGradient(
+          canvas.width * 0.5,
+          canvas.height * 0.3,
+          0,
+          canvas.width * 0.5,
+          canvas.height * 0.3,
+          canvas.width * 0.6,
+        );
+        grd.addColorStop(0, "rgba(201,168,76,0.04)");
+        grd.addColorStop(1, "rgba(9,9,11,0)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p) => {
+          p.update();
+          p.draw();
+        });
+
+        // Connection lines between close particles
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 80) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(201,168,76,${0.06 * (1 - dist / 80)})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        gradAngle += 0.003;
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // ── CUSTOM CURSOR ──
+      const cur = document.getElementById("cursor");
+      const ring = document.getElementById("cursor-ring");
+      let mx = 0,
+        my = 0,
+        rx = 0,
+        ry = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        cur.style.left = mx + "px";
+        cur.style.top = my + "px";
+      });
+      function animRing() {
+        rx += (mx - rx) * 0.14;
+        ry += (my - ry) * 0.14;
+        ring.style.left = rx + "px";
+        ring.style.top = ry + "px";
+        requestAnimationFrame(animRing);
+      }
+      animRing();
+
+      // ── SIDEBAR ──
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+        document.getElementById("sidebar-overlay").classList.toggle("active");
+        document
+          .getElementById("ham-btn")
+          .parentElement.parentElement.parentElement.classList.toggle(
+            "sidebar-open",
+          );
+      }
+      function toggleAccordion(el) {
+        el.classList.toggle("open");
+        const sub = el.nextElementSibling;
+        sub.classList.toggle("open");
+      }
+
+      // ── CART ──
+      let count = 0;
+      function addToCart() {
+        count++;
+        document.getElementById("cart-count").textContent = count;
+        const t = document.getElementById("toast");
+        t.style.display = "block";
+        setTimeout(() => (t.style.display = "none"), 2800);
+      }
+
+      // ── BACK TO TOP ──
+      const topBtn = document.getElementById("back-to-top");
+      window.addEventListener("scroll", () => {
+        topBtn.style.display = window.scrollY > 400 ? "flex" : "none";
+      });
+
+      // ── CHAT ──
+      document.getElementById("chat-icon").onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById("chat-box").classList.toggle("show");
+      };
+      document.getElementById("close-chat").onclick = () =>
+        document.getElementById("chat-box").classList.remove("show");
+    </script>
+  </body>
+</html>
